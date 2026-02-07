@@ -1,2 +1,2 @@
 # 8004-boilerplate
-Vypers implementation of Avalabs solidity boilerplate, with FastAPI
+Vyper implementation of Avalabs solidity boilerplate, with FastAPI
