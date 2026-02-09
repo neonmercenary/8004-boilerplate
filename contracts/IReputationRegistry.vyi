@@ -1,0 +1,91 @@
+# @version ^0.4.0
+# SPDX-License-Identifier: MIT
+
+# Events
+event NewFeedback:
+    agentId: uint256
+    clientAddress: indexed(address)
+    feedbackIndex: uint64
+    value: int128
+    valueDecimals: uint8
+    indexedTag1: indexed(String[64])
+    tag1: String[64]
+    tag2: String[64]
+    endpoint: String[128]
+    feedbackURI: String[128]
+    feedbackHash: bytes32
+
+event FeedbackRevoked:
+    agentId: uint256
+    clientAddress: indexed(address)
+    feedbackIndex: indexed(uint64)
+
+event ResponseAppended:
+    agentId: uint256
+    clientAddress: indexed(address)
+    feedbackIndex: uint64
+    responder: indexed(address)
+    responseURI: String[128]
+    responseHash: bytes32
+
+# Functions
+@view
+@external
+def getIdentityRegistry() -> address:
+    ...
+
+@external
+def giveFeedback(
+    agentId: uint256,
+    _value: int128,
+    valueDecimals: uint8,
+    tag1: String[64],
+    tag2: String[64],
+    endpoint: String[128],
+    feedbackURI: String[128],
+    feedbackHash: bytes32
+):
+    ...
+
+@external
+def revokeFeedback(agentId: uint256, feedbackIndex: uint64):
+    ...
+
+@external
+def appendResponse(
+    agentId: uint256,
+    clientAddress: address,
+    feedbackIndex: uint64,
+    responseURI: String[128],
+    responseHash: bytes32
+):
+    ...
+
+@view
+@external
+def getSummary(
+    agentId: uint256,
+    clientAddresses: DynArray[address, 50],
+    tag1: String[64],
+    tag2: String[64]
+) -> (uint64, int128, uint8):
+    ...
+
+@view
+@external
+def readFeedback(
+    agentId: uint256,
+    clientAddress: address,
+    feedbackIndex: uint64
+) -> (int128, uint8, String[64], String[64], bool):
+    ...
+
+@view
+@external
+def getClients(agentId: uint256) -> DynArray[address, 50]:
+    ...
+
+@view
+@external
+def getLastIndex(agentId: uint256, clientAddress: address) -> uint64:
+    ...

@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ERC-8004 TaskAgent Demo | Avalanche C-Chain</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+  <style>
+    :root {
+      --primary: #e84142;
+      --primary-dark: #c73839;
+      --secondary: #232323;
+      --bg: #0f0f0f;
+      --card-bg: #1a1a1a;
+      --text: #ffffff;
+      --text-muted: #888;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary), #ff6b6b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .connect-section {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .status.connected {
+      display: block;
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--success);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      min-width: 0;
+      /* allow grid items to shrink below content min-width */
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    /* Utility to layout card content vertically */
+    .display-flex {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-width: 0;
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.75rem;
+      color: white;
+      font-size: 1rem;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .task-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .task-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      word-break: break-word;
+    }
+
+    .task-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .task-id {
+      font-weight: bold;
+    }
+
+    .task-status {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .task-status.pending {
+      background: var(--warning);
+      color: black;
+    }
+
+    .task-status.in-progress {
+      background: #3b82f6;
+    }
+
+    .task-status.completed {
+      background: var(--success);
+    }
+
+    .task-status.disputed {
+      background: var(--error);
+    }
+
+    .task-status.cancelled {
+      background: var(--text-muted);
+    }
+
+    .task-details {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .feedback-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .feedback-form input {
+      flex: 1;
+    }
+
+    .feedback-form button {
+      padding: 0.5rem 1rem;
+    }
+
+    .rating-input {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .rating-input input[type="range"] {
+      flex: 1;
+    }
+
+    .info-box {
+      background: rgba(232, 65, 66, 0.1);
+      border: 1px solid rgba(232, 65, 66, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .info-box h4 {
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .wallet-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .wallet-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 180px;
+    }
+
+    .wallet-btn:disabled {
+      background: var(--success);
+      opacity: 1;
+    }
+
+    .wallet-btn.unavailable {
+      background: var(--secondary);
+      opacity: 0.5;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>ERC-8004 TaskAgent Demo</h1>
+      <p class="subtitle">AI Agent Trust Layer on Avalanche C-Chain</p>
+      <span class="badge">Fuji Testnet</span>
+    </header>
+
+    <section class="connect-section">
+      <div class="wallet-buttons">
+        <button id="connectCoreBtn" class="wallet-btn">
+          <img src="https://avatars.githubusercontent.com/u/80820427?s=20" alt="Core"
+            style="width:20px;height:20px;margin-right:8px;vertical-align:middle;">
+          Connect Core
+        </button>
+        <button id="connectMetaMaskBtn" class="wallet-btn">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask"
+            style="width:20px;height:20px;margin-right:8px;vertical-align:middle;">
+          Connect MetaMask
+        </button>
+        <button id="connectAnyBtn" class="wallet-btn" style="background: var(--secondary);">
+          Any Wallet
+        </button>
+      </div>
+      <div id="connectionStatus" class="status"></div>
+    </section>
+
+    <div class="grid ">
+      <!-- Agent Info Card -->
+      <div class="card display-flex ">
+        <h2>🤖 Agent Identity</h2>
+        <div class="stat-grid">
+          <div class="stat">
+            <div class="stat-label">Agent ID</div>
+            <div class="stat-value" id="agentId">-</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Total Tasks</div>
+            <div class="stat-value" id="totalTasks">-</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Avg Rating</div>
+            <div class="stat-value" id="avgRating">-</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Validations</div>
+            <div class="stat-value" id="validationCount">-</div>
+          </div>
+        </div>
+        <div class="info-box">
+          <h4>ERC-8004 Identity Registry</h4>
+          <p>The agent has a unique on-chain identity as an ERC-721 NFT, with metadata describing its capabilities.</p>
+        </div>
+      </div>
+
+      <!-- Request Task Card -->
+      <div class="card">
+        <h2>📝 Request Task</h2>
+        <form id="taskForm">
+          <div class="form-group">
+            <label>Task Type</label>
+            <select id="taskType">
+              <option value="0">Text Summarization (0.001 AVAX)</option>
+              <option value="1">Code Review (0.005 AVAX)</option>
+              <option value="2">Data Analysis (0.003 AVAX)</option>
+              <option value="3">Translation (0.002 AVAX)</option>
+              <option value="4">Custom (0.01 AVAX)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Input Data (IPFS URI or description)</label>
+            <textarea id="taskInput" rows="3" placeholder="Enter your task input..."></textarea>
+          </div>
+          <button type="submit" id="submitTaskBtn">Submit Task</button>
+        </form>
+        <div class="info-box">
+          <h4>How it Works</h4>
+          <p>Submit a task with payment. The agent processes it off-chain and posts the result hash on-chain for
+            verification.</p>
+        </div>
+      </div>
+
+      <!-- Tasks List Card -->
+      <div class="card">
+        <h2>📋 Your Tasks</h2>
+        <div id="taskList" class="task-list">
+          <p class="text-muted">Connect wallet to see your tasks</p>
+        </div>
+      </div>
+
+      <!-- Reputation Card -->
+      <div class="card">
+        <h2>⭐ Give Feedback</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1rem;">Rate completed tasks to build the agent's on-chain
+          reputation.</p>
+        <div class="form-group">
+          <label>Task ID</label>
+          <input type="number" id="feedbackTaskId" placeholder="Enter task ID">
+        </div>
+        <div class="form-group">
+          <label>Rating (1-5)</label>
+          <div class="rating-input">
+            <input type="range" id="feedbackRating" min="1" max="5" value="5">
+            <span id="ratingValue">5</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Comment</label>
+          <input type="text" id="feedbackComment" placeholder="Your feedback...">
+        </div>
+        <button id="submitFeedbackBtn">Submit Feedback</button>
+        <div class="info-box">
+          <h4>ERC-8004 Reputation Registry</h4>
+          <p>Feedback is stored on-chain with tags, allowing for filtered reputation queries.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Built with <a href="https://eips.ethereum.org/EIPS/eip-8004" target="_blank">ERC-8004</a> |
+        <a href="https://github.com/sudeepb02/awesome-erc8004" target="_blank">Resources</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Contract ABIs (simplified for demo)
+    const TaskAgentABI = [
+      "function agentId() view returns (uint256)",
+      "function agentName() view returns (string)",
+      "function isRegistered() view returns (bool)",
+      "function getTotalTasks() view returns (uint256)",
+      "function getReputationSummary() view returns (uint64, int128)",
+      "function getValidationSummary() view returns (uint64, uint8)",
+      "function taskPrices(uint8) view returns (uint256)",
+      "function requestTask(uint8 taskType, string inputURI, bytes32 inputHash) payable returns (uint256)",
+      "function getTask(uint256 taskId) view returns (tuple(uint256 taskId, uint256 agentId, address requester, uint8 taskType, uint8 status, string inputURI, bytes32 inputHash, string outputURI, bytes32 outputHash, uint256 payment, uint256 createdAt, uint256 completedAt))",
+      "function getAllTaskIds() view returns (uint256[])",
+      "function giveFeedback(uint256 taskId, int128 rating, string comment)",
+      "event TaskRequested(uint256 indexed taskId, address indexed requester, uint8 taskType, uint256 payment)",
+      "event TaskCompleted(uint256 indexed taskId, string outputURI, bytes32 outputHash)"
+    ];
+
+    // Contract addresses - UPDATE THIS after deployment or use URL param
+    const CONTRACTS = {
+      taskAgent: "{{ contract_address }}" // Default: Fuji deployment
+    };
+
+    // Task prices in AVAX
+    const TASK_PRICES = {
+      0: "0.001",
+      1: "0.005",
+      2: "0.003",
+      3: "0.002",
+      4: "0.01"
+    };
+
+    const TASK_STATUS = ["Pending", "In Progress", "Completed", "Disputed", "Cancelled"];
+    const TASK_TYPES = ["Summarization", "Code Review", "Data Analysis", "Translation", "Custom"];
+
+    let provider, signer, taskAgentContract;
+    let userAddress = "";
+    let connectedWallet = "";
+
+    // Avalanche Fuji network config for adding to wallet
+    const FUJI_NETWORK = {
+      chainId: '0xA869', // 43113 in hex
+      chainName: 'Avalanche Fuji Testnet',
+      nativeCurrency: {
+        name: 'AVAX',
+        symbol: 'AVAX',
+        decimals: 18
+      },
+      rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
+      blockExplorerUrls: ['https://testnet.snowtrace.io/']
+    };
+
+    // Detect available wallets
+    function detectWallets() {
+      const wallets = {
+        core: null,
+        metamask: null
+      };
+
+      console.log("Detecting wallets...");
+      console.log("window.avalanche:", window.avalanche);
+      console.log("window.core:", window.core);
+      console.log("window.ethereum:", window.ethereum);
+
+      // Core Wallet detection - multiple possible injection points
+      // 1. window.core (newer Core browser extension)
+      if (window.core?.ethereum) {
+        console.log("Found Core at window.core.ethereum");
+        wallets.core = window.core.ethereum;
+      }
+      // 2. window.avalanche (Core mobile / older versions)
+      else if (window.avalanche) {
+        console.log("Found Core at window.avalanche");
+        wallets.core = window.avalanche;
+      }
+      // 3. window.ethereum with isAvalanche flag
+      else if (window.ethereum?.isAvalanche) {
+        console.log("Found Core at window.ethereum (isAvalanche)");
+        wallets.core = window.ethereum;
+      }
+
+      // MetaMask detection
+      if (window.ethereum?.isMetaMask && !window.ethereum?.isAvalanche) {
+        wallets.metamask = window.ethereum;
+      }
+
+      // Handle case where multiple wallets inject into window.ethereum.providers
+      if (window.ethereum?.providers?.length) {
+        console.log("Multiple providers detected:", window.ethereum.providers.length);
+        window.ethereum.providers.forEach((p, i) => {
+          console.log(`Provider ${i}:`, p.isAvalanche, p.isMetaMask, p.isCoreWallet);
+          if (p.isAvalanche || p.isCoreWallet) wallets.core = p;
+          if (p.isMetaMask && !p.isAvalanche && !p.isCoreWallet) wallets.metamask = p;
+        });
+      }
+
+      // Fallback: if only window.ethereum exists and no specific wallet found, use it for both
+      if (!wallets.core && !wallets.metamask && window.ethereum) {
+        console.log("Fallback: using window.ethereum");
+        // Check if it might be Core
+        if (window.ethereum.isCoreWallet) {
+          wallets.core = window.ethereum;
+        } else {
+          wallets.metamask = window.ethereum;
+        }
+      }
+
+      console.log("Detected wallets:", { core: !!wallets.core, metamask: !!wallets.metamask });
+      return wallets;
+    }
+
+    // Initialize
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Try to load contract address from URL params or prompt
+      const urlParams = new URLSearchParams(window.location.search);
+      const contractAddr = urlParams.get("contract");
+      if (contractAddr) {
+        CONTRACTS.taskAgent = contractAddr;
+      }
+
+      // Detect wallets and update UI
+      const wallets = detectWallets();
+
+      const coreBtn = document.getElementById("connectCoreBtn");
+      const metamaskBtn = document.getElementById("connectMetaMaskBtn");
+
+      if (!wallets.core) {
+        coreBtn.classList.add("unavailable");
+        coreBtn.title = "Core Wallet not detected";
+      }
+
+      if (!wallets.metamask) {
+        metamaskBtn.classList.add("unavailable");
+        metamaskBtn.title = "MetaMask not detected";
+      }
+
+      if (!wallets.core && !wallets.metamask) {
+        coreBtn.textContent = "Install Core";
+        coreBtn.onclick = () => window.open("https://core.app/", "_blank");
+        metamaskBtn.textContent = "Install MetaMask";
+        metamaskBtn.onclick = () => window.open("https://metamask.io/", "_blank");
+      }
+
+      // Event listeners
+      coreBtn.addEventListener("click", () => connectWallet("core"));
+      metamaskBtn.addEventListener("click", () => connectWallet("metamask"));
+      document.getElementById("connectAnyBtn").addEventListener("click", () => connectWallet("any"));
+      document.getElementById("taskForm").addEventListener("submit", submitTask);
+      document.getElementById("submitFeedbackBtn").addEventListener("click", submitFeedback);
+      document.getElementById("feedbackRating").addEventListener("input", (e) => {
+        document.getElementById("ratingValue").textContent = e.target.value;
+      });
+    });
+
+    async function switchToFuji(walletProvider) {
+      try {
+        await walletProvider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: FUJI_NETWORK.chainId }],
+        });
+        return true;
+      } catch (switchError) {
+        // Chain not added, try to add it
+        if (switchError.code === 4902) {
+          try {
+            await walletProvider.request({
+              method: 'wallet_addEthereumChain',
+              params: [FUJI_NETWORK],
+            });
+            return true;
+          } catch (addError) {
+            console.error("Failed to add Fuji network:", addError);
+            return false;
+          }
+        }
+        console.error("Failed to switch network:", switchError);
+        return false;
+      }
+    }
+
+    async function connectWallet(walletType) {
+      try {
+        const wallets = detectWallets();
+        let walletProvider;
+        let walletName = walletType;
+
+        if (walletType === "core") {
+          walletProvider = wallets.core;
+          if (!walletProvider) {
+            window.open("https://core.app/", "_blank");
+            return;
+          }
+        } else if (walletType === "metamask") {
+          walletProvider = wallets.metamask;
+          if (!walletProvider) {
+            window.open("https://metamask.io/", "_blank");
+            return;
+          }
+        } else if (walletType === "any") {
+          // Try Core first, then MetaMask, then raw window.ethereum
+          walletProvider = wallets.core || wallets.metamask || window.core?.ethereum || window.avalanche || window.ethereum;
+          walletName = wallets.core ? "Core" : (wallets.metamask ? "MetaMask" : "Wallet");
+          if (!walletProvider) {
+            alert("No wallet detected. Please install Core Wallet or MetaMask.");
+            return;
+          }
+        }
+
+        // Check for contract address
+        if (!CONTRACTS.taskAgent) {
+          CONTRACTS.taskAgent = prompt("Enter TaskAgent contract address:");
+          if (!CONTRACTS.taskAgent) return;
+        }
+
+        // Request accounts
+        await walletProvider.request({ method: 'eth_requestAccounts' });
+
+        provider = new ethers.providers.Web3Provider(walletProvider);
+        signer = provider.getSigner();
+        userAddress = await signer.getAddress();
+
+        // Check network (Avalanche Fuji = 43113, Mainnet = 43114)
+        const network = await provider.getNetwork();
+        if (network.chainId !== 43113 && network.chainId !== 43114 && network.chainId !== 31337) {
+          const switched = await switchToFuji(walletProvider);
+          if (!switched) {
+            alert("Please switch to Avalanche Fuji network manually");
+            return;
+          }
+          // Refresh provider after network switch
+          provider = new ethers.providers.Web3Provider(walletProvider);
+          signer = provider.getSigner();
+        }
+
+        taskAgentContract = new ethers.Contract(CONTRACTS.taskAgent, TaskAgentABI, signer);
+        connectedWallet = walletType;
+
+        // Update UI
+        const displayName = walletType === "core" ? "Core" : (walletType === "metamask" ? "MetaMask" : walletName);
+        document.getElementById("connectionStatus").classList.add("connected");
+        document.getElementById("connectionStatus").textContent = `${displayName}: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+
+        document.getElementById("connectCoreBtn").disabled = true;
+        document.getElementById("connectMetaMaskBtn").disabled = true;
+        document.getElementById("connectAnyBtn").disabled = true;
+
+        if (walletType === "core") {
+          document.getElementById("connectCoreBtn").textContent = "Connected";
+          document.getElementById("connectCoreBtn").style.background = "var(--success)";
+        } else if (walletType === "metamask") {
+          document.getElementById("connectMetaMaskBtn").textContent = "Connected";
+          document.getElementById("connectMetaMaskBtn").style.background = "var(--success)";
+        } else {
+          document.getElementById("connectAnyBtn").textContent = "Connected";
+          document.getElementById("connectAnyBtn").style.background = "var(--success)";
+        }
+
+        await loadAgentData();
+        await loadUserTasks();
+
+      } catch (error) {
+        console.error("Connection error:", error);
+        alert("Failed to connect: " + error.message);
+      }
+    }
+
+    async function loadAgentData() {
+      try {
+        const agentId = await taskAgentContract.agentId();
+        const totalTasks = await taskAgentContract.getTotalTasks();
+        const [feedbackCount, avgRating] = await taskAgentContract.getReputationSummary();
+        const [validationCount, avgScore] = await taskAgentContract.getValidationSummary();
+
+        document.getElementById("agentId").textContent = agentId.toString();
+        document.getElementById("totalTasks").textContent = totalTasks.toString();
+
+        // --- FIX APPLIED HERE ---
+        // If feedbackCount > 0, format avgRating from 18 decimals to a human decimal
+        if (feedbackCount > 0) {
+          // For Ethers v5 use: ethers.utils.formatUnits(avgRating, 18)
+          // For Ethers v6 use: ethers.formatUnits(avgRating, 18)
+          const formattedRating = ethers.utils.formatUnits(avgRating, 18);
+
+          // We use parseFloat + toFixed(2) to show "4.50" instead of "4.500000000000"
+          document.getElementById("avgRating").textContent = `${parseFloat(formattedRating)}/5`;
+        } else {
+          document.getElementById("avgRating").textContent = "N/A";
+        }
+        // ------------------------
+
+        document.getElementById("validationCount").textContent = validationCount.toString();
+
+      } catch (error) {
+        console.error("Error loading agent data:", error);
+      }
+    }
+    async function loadUserTasks() {
+      try {
+        const taskIds = await taskAgentContract.getAllTaskIds();
+        const taskListEl = document.getElementById("taskList");
+        taskListEl.innerHTML = "";
+
+        if (taskIds.length === 0) {
+          taskListEl.innerHTML = "<p style='color: var(--text-muted);'>No tasks yet</p>";
+          return;
+        }
+
+        for (const taskId of taskIds) {
+          const task = await taskAgentContract.getTask(taskId);
+          if (task.requester.toLowerCase() === userAddress.toLowerCase()) {
+            const taskEl = document.createElement("div");
+            taskEl.className = "task-item";
+            taskEl.innerHTML = `
+              <div class="task-header">
+                <span class="task-id">Task #${task.taskId}</span>
+                <span class="task-status ${TASK_STATUS[task.status].toLowerCase().replace(" ", "-")}">${TASK_STATUS[task.status]}</span>
+              </div>
+              <div class="task-details">
+                <div>Type: ${TASK_TYPES[task.taskType]}</div>
+                <div>Payment: ${ethers.utils.formatEther(task.payment)} AVAX</div>
+                ${task.outputURI ? `<div>Output: ${task.outputURI}</div>` : ""}
+              </div>
+            `;
+            taskListEl.appendChild(taskEl);
+          }
+        }
+
+        if (taskListEl.children.length === 0) {
+          taskListEl.innerHTML = "<p style='color: var(--text-muted);'>No tasks from your address</p>";
+        }
+
+      } catch (error) {
+        console.error("Error loading tasks:", error);
+      }
+    }
+
+    async function submitTask(e) {
+      e.preventDefault();
+
+      if (!taskAgentContract) {
+        alert("Please connect wallet first");
+        return;
+      }
+
+      const taskType = document.getElementById("taskType").value;
+      const inputData = document.getElementById("taskInput").value;
+      const price = TASK_PRICES[taskType];
+
+      if (!inputData) {
+        alert("Please enter task input");
+        return;
+      }
+
+      try {
+        const btn = document.getElementById("submitTaskBtn");
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading"></span> Submitting...';
+
+        // Create input hash
+        const inputHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(inputData));
+        const inputURI = `data:text/plain,${encodeURIComponent(inputData)}`;
+
+        const tx = await taskAgentContract.requestTask(
+          taskType,
+          inputURI,
+          inputHash,
+          { value: ethers.utils.parseEther(price) }
+        );
+
+        await tx.wait();
+        alert("Task submitted successfully!");
+
+        document.getElementById("taskInput").value = "";
+        await loadAgentData();
+        await loadUserTasks();
+
+      } catch (error) {
+        console.error("Error submitting task:", error);
+        alert("Failed to submit task: " + (error.reason || error.message));
+      } finally {
+        const btn = document.getElementById("submitTaskBtn");
+        btn.disabled = false;
+        btn.textContent = "Submit Task";
+      }
+    }
+
+    async function submitFeedback() {
+      if (!taskAgentContract) {
+        alert("Please connect wallet first");
+        return;
+      }
+
+      const taskId = document.getElementById("feedbackTaskId").value;
+      const rating = document.getElementById("feedbackRating").value;
+      const comment = document.getElementById("feedbackComment").value;
+
+      if (!taskId) {
+        alert("Please enter task ID");
+        return;
+      }
+
+      try {
+        const btn = document.getElementById("submitFeedbackBtn");
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading"></span> Submitting...';
+
+        const tx = await taskAgentContract.giveFeedback(taskId, rating, comment || "");
+        await tx.wait();
+
+        alert("Feedback submitted successfully!");
+        await loadAgentData();
+
+        document.getElementById("feedbackTaskId").value = "";
+        document.getElementById("feedbackComment").value = "";
+
+      } catch (error) {
+        console.error("Error submitting feedback:", error);
+        alert("Failed to submit feedback: " + (error.reason || error.message));
+      } finally {
+        const btn = document.getElementById("submitFeedbackBtn");
+        btn.disabled = false;
+        btn.textContent = "Submit Feedback";
+      }
+    }
+  </script>
+</body>
+
+</html>

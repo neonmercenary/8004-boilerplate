@@ -1,0 +1,80 @@
+# @version ^0.4.0
+# SPDX-License-Identifier: MIT
+
+# Events
+event ValidationRequest:
+    validatorAddress: indexed(address)
+    agentId: indexed(uint256)
+    requestURI: String[128]
+    requestHash: indexed(bytes32)
+
+event ValidationResponse:
+    validatorAddress: indexed(address)
+    agentId: indexed(uint256)
+    requestHash: indexed(bytes32)
+    response: uint8
+    responseURI: String[128]
+    responseHash: bytes32
+    tag: String[64]
+
+struct ValidationStatus:
+    validatorAddress: address
+    agentId: uint256
+    response: uint8
+    responseHash: bytes32
+    tag: String[64]
+    lastUpdate: uint256
+
+struct ValidationSummary:
+    count: uint64
+    averageResponse: uint8
+
+    
+# Functions
+@view
+@external
+def getIdentityRegistry() -> address:
+    ...
+
+@external
+def validationRequest(
+    validatorAddress: address,
+    agentId: uint256,
+    requestURI: String[128],
+    requestHash: bytes32
+):
+    ...
+
+@external
+def validationResponse(
+    requestHash: bytes32,
+    response: uint8,
+    responseURI: String[128],
+    responseHash: bytes32,
+    tag: String[64]
+):
+    ...
+
+@view
+@external
+def getValidationStatus(requestHash: bytes32) ->  ValidationStatus:     # Using a struct here to return all relevant validation status information together
+    ...
+
+@view
+@external
+def getSummary(
+    agentId: uint256,
+    validatorAddresses: DynArray[address, 50],
+    tag: String[64]
+) -> ValidationSummary:     # Using a struct here to return both count and average response together
+    ...
+
+@view
+@external
+def getAgentValidations(agentId: uint256) -> DynArray[bytes32, 50]:
+    ...
+
+@view
+@external
+def getValidatorRequests(validatorAddress: address) -> DynArray[bytes32, 50]:
+    ...

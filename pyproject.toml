@@ -1,0 +1,18 @@
+[project]
+name = "8004-boilerplate"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "alembic>=1.18.3",
+    "ape-alchemy>=0.8.11",
+    "ape-avalanche>=0.8.1",
+    "ape-vyper>=0.8.10",
+    "eth-abi>=5.2.0",
+    "eth-ape>=0.8.47",
+    "eth-utils>=5.3.1",
+    "fastapi[standard]>=0.128.4",
+    "sqlalchemy>=2.0.46",
+    "vyper>=0.4.3",
+]

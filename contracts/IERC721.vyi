@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: MIT
+
+@view
+@external
+def balanceOf(owner: address) -> uint256: ...
+
+@view
+@external
+def ownerOf(tokenId: uint256) -> address: ...
+
+@external
+def transferFrom(frm: address, to: address, tokenId: uint256): ...
+
+@external
+def approve(to: address, tokenId: uint256): ...
+
+@view
+@external
+def getApproved(tokenId: uint256) -> address: ...
+
+@external
+def setApprovalForAll(operator: address, approved: bool): ...
+
+@view
+@external
+def isApprovedForAll(owner: address, operator: address) -> bool: ...
+
+@view
+@external
+def tokenURI(tokenId: uint256) -> String[128]: ...
+
+@view
+@external
+def supportsInterface(interfaceId: bytes4) -> bool: ...

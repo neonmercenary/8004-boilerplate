@@ -1,0 +1,72 @@
+# SPDX-License-Identifier: MIT
+
+struct MetadataEntry:
+    key: String[64]
+    value: Bytes[256]
+
+event Registered:
+    agentId: indexed(uint256)
+    agentURI: String[128]
+    owner: indexed(address)
+
+event URIUpdated:
+    agentId: indexed(uint256)
+    newURI: String[128]
+    updatedBy: indexed(address)
+
+event MetadataSet:
+    agentId: indexed(uint256)
+    indexedMetadataKey: indexed(String[64])
+    metadataKey: String[64]
+    metadataValue: Bytes[256]
+
+event AgentWalletSet:
+    agentId: indexed(uint256)
+    wallet: indexed(address)
+
+event AgentWalletUnset:
+    agentId: indexed(uint256)
+
+# In Vyper 0.4.x, interfaces use 'def' without '@external' or 'pass'
+@external
+def register_with_meta(agentURI: String[128], metadata: DynArray[MetadataEntry, 10]) -> uint256:
+    ...
+
+@external
+def register_with_uri(agentURI: String[128]) -> uint256:
+    ...
+
+@external
+def register() -> uint256:
+    ...
+
+@external
+def setAgentURI(agentId: uint256, newURI: String[128]):
+    ...
+
+@view
+@external
+def getMetadata(agentId: uint256, metadataKey: String[64]) -> Bytes[256]:
+    ...
+
+@external
+def setMetadata(agentId: uint256, metadataKey: String[64], metadataValue: Bytes[256]):
+    ...
+
+@external
+def setAgentWallet(agentId: uint256, newWallet: address, deadline: uint256, signature: Bytes[65]):
+    ...
+
+@view
+@external
+def getAgentWallet(agentId: uint256) -> address:
+    ...
+
+@external
+def unsetAgentWallet(agentId: uint256):
+    ...
+
+@view
+@external
+def isAuthorized(agentId: uint256, caller: address) -> bool:
+    ...

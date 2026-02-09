@@ -1,0 +1,15 @@
+renamed the different register functions since vyper does not support function overloading (https://github.com/ava-labs/8004-boilerplate/blob/main/contracts/IIdentityRegistry.sol {28,29,30})
+changed value to _value in IReputationRegistry.vyi, due to vyper [ArgumentException] Cannot use 'value' as a variable name in a function input (https://github.com/ava-labs/8004-boilerplate/blob/main/contracts/IReputationRegistry.sol, {43})
+Semantic Clarity: Replaces raw tuples (e.g., (uint64, int128, uint8)) with named members (e.g., Summary.score). This prevents "off-by-one" errors during data retrieval.
+
+ABI Compatibility: In the EVM, a Vyper struct and a Solidity tuple are encoded identically. This means Solidity contracts can still interact with these registries without compatibility issues.
+
+Developer Experience: In implementation files (like TaskAgent.vy), accessing data via result.averageResponse is significantly more readable and maintainable than using index-based access like result[1].
+
+Centralized Definition: By defining structs in the .vyi (Interface) files, they act as a "Single Source of Truth" for both the Registry and any contract that imports it.
+
+using structs to return data instead of tuples
+
+built own implementation of ERC-721 Because vyper is strict with implementations
+Changed ZERO_ADDRESS TO ZERO Variable
+fixed index.html css overflow when populated and rating division
