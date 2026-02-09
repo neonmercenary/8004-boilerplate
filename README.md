@@ -233,4 +233,3 @@ Despite being written in Vyper, the ABI is **100% compatible** with the original
 - [Original Ava Labs Boilerplate](https://github.com/ava-labs/8004-boilerplate)
 - [EIP-8004 Specification](https://eips.ethereum.org/EIPS/eip-8004)
 - [Awesome ERC-8004](https://github.com/sudeepb02/awesome-erc8004)
-- [Avalanche Docs](https://docs.avax.network/)
