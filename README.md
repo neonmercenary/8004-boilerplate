@@ -17,7 +17,6 @@
 ---
 
 An enterprise-grade, gas-optimized implementation of [ERC-8004](https://eips.ethereum.org/EIPS/eip-8004) for AI Agents, rewritten in **Vyper** for maximum security and efficiency.
-My apologies—you're absolutely right. Credit where it's due is essential, especially when you've fundamentally re-engineered a project to be faster and safer.
 
 
 ## 🧬 Origin & Evolution
