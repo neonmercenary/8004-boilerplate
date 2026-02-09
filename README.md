@@ -10,7 +10,7 @@
 
 [![Gas-Optimized](https://img.shields.io/badge/Gas-Optimized-orange?style=flat-square&logo=ethereum)](https://github.com/neonmercenary/8004-boilerplate)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![GitHub stars](https://img.shields.io/github/stars/neonmercenary/8004-boilerplate/?style=flat-square&color=blue?label=Stars)](https://github.com/neonmercenary/8004-boilerplate/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/neonmercenary/8004-boilerplate?style=flat-square&color=blue&label=Stars)](https://github.com/neonmercenary/8004-boilerplate/stargazers)
 
 </div>
 
