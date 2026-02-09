@@ -9,9 +9,8 @@
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-005850?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 
 [![Gas-Optimized](https://img.shields.io/badge/Gas-Optimized-orange?style=flat-square&logo=ethereum)](https://github.com/neonmercenary/8004-boilerplate)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![GitHub stars](https://img.shields.io/github/stars/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME?style=flat-square&color=blue)](https://github.com/neonmercenary/8004-boilerplate/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/neonmercenary/8004-boilerplate/?style=flat-square&color=blue?label=Stars)](https://github.com/neonmercenary/8004-boilerplate/stargazers)
 
 </div>
 
