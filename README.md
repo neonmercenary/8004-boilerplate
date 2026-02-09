@@ -53,14 +53,26 @@ While the original provides a solid foundation in Solidity, this version has bee
 
 My Vyper implementation compiles with a minimalist bytecode footprint. This ensures that the agent's logic is as cheap to deploy as it is to run.
 
-> **[Reference Image: https://github.com/neonmercenary/8004-boilerplate/docs/compilation_success.png]**
+
+> **[Reference Image:]**
+<p align="center">
+  <img src="docs/compilation_success.png" width="200" alt="Success Logo">
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/vyper-0.4.0-purple.svg">
+</p>
 
 ### 2. Gas Benchmarks
 
-By removing the overhead of Solidity's metadata and using packed structs, this contract executes `completeTask` significantly cheaper than the original.
+By removing the overhead of Solidity's metadata and using packed structs, this contract executes `register` significantly cheaper than the original — **saving up to 1,000,000 wei per call**
 
-> **[Reference Image: https://github.com/neonmercenary/8004-boilerplate/docs/gas_comparison.png]**
-
+> **[Reference Image:]**
+<p align="center">
+  <img src="/docs/gas_comparison.png" width="200" alt="Gas Logo">
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/vyper-0.4.0-purple.svg">
+</p>
 
 ## 🚀 Why Vyper? (The Efficiency Edge)
 
@@ -68,7 +80,7 @@ This implementation significantly reduces operational overhead for AI Agents com
 
 | Feature | Vyper Implementation | Benefit |
 | --- | --- | --- |
-| **Gas Cost** | **~15-20% Lower** | Lower overhead for `completeTask` and `giveFeedback`. |
+| **Gas Cost** | **~15-40% Lower** | Lower overhead for `completeTask` and `giveFeedback`. |
 | **Security** | No Overflows / Bounds Checking | Immune to common Solidity arithmetic vulnerabilities. |
 | **Storage** | Packed Structs | Lower `SSTORE` costs for agent metadata and tasks. |
 | **Auditability** | Minimalist Bytecode | Easier for users to verify agent behavior on-chain. |
@@ -140,6 +152,38 @@ Because Vyper is strict with interface implementations, I built a bespoke, light
 
 
 ```
+## How It Works
+
+```
+┌─────────────┐     ┌──────────────┐     ┌─────────────────┐
+│   Frontend  │────▶│  TaskAgent   │────▶│ Agent Backend   │
+│   (User)    │     │  (On-Chain)  │     │ (Your AI Logic) │
+└─────────────┘     └──────────────┘     └─────────────────┘
+       │                   │                      │
+       │                   ▼                      │
+       │           ┌──────────────┐               │
+       │           │   ERC-8004   │               │
+       │           │  Registries  │               │
+       │           └──────────────┘               │
+       │                   │                      │
+       ▼                   ▼                      ▼
+  Submit Task ───▶ Stored On-Chain ───▶ Backend Processes
+       │                   │                      │
+       │                   ▼                      │
+       │           Task Completed ◀──────────────┘
+       │                   │
+       ▼                   ▼
+  Give Feedback ──▶ Reputation Updated
+```
+
+## Task Flow
+
+1. **User submits task** with payment via frontend
+2. **Backend polls** for new pending tasks
+3. **Backend processes** task using your defined AI logic/Function in main.py
+4. **Backend completes** task on-chain with output hash
+5. **User verifies** output and gives feedback
+6. **Feedback stored** permanently in Reputation Registry
 
 
 ## ⚡ Quick Start
