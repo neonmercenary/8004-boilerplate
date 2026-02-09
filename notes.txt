@@ -13,3 +13,4 @@ using structs to return data instead of tuples
 built own implementation of ERC-721 Because vyper is strict with implementations
 Changed ZERO_ADDRESS TO ZERO Variable
 fixed index.html css overflow when populated and rating division
+using routescan hack for sync due to avalanche fuji-RPC not too friendly with ape
