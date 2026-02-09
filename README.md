@@ -1,6 +1,21 @@
 
+<div align="center">
 
 # 🛡️ ERC-8004 Agent Boilerplate (Vyper Edition)
+
+[![Vyper](https://img.shields.io/badge/Vyper-0.4.0-363636?style=for-the-badge&logo=python&logoColor=white)](https://docs.vyperlang.org/)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Ape](https://img.shields.io/badge/Framework-Ape-black?style=for-the-badge&logo=eth-ape&logoColor=white)](https://apeworx.io/)
+[![FastAPI](https://img.shields.io/badge/API-FastAPI-005850?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+
+[![Gas-Optimized](https://img.shields.io/badge/Gas-Optimized-orange?style=flat-square&logo=ethereum)][(https://github.com/neonmercenary/8004-boilerplate)]
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![GitHub stars](https://img.shields.io/github/stars/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME?style=flat-square&color=blue)](https://github.com/neonmercenary/8004-boilerplate/stargazers)
+
+</div>
+
+---
 
 An enterprise-grade, gas-optimized implementation of [ERC-8004](https://eips.ethereum.org/EIPS/eip-8004) for AI Agents, rewritten in **Vyper** for maximum security and efficiency.
 My apologies—you're absolutely right. Credit where it's due is essential, especially when you've fundamentally re-engineered a project to be faster and safer.
@@ -38,13 +53,13 @@ While the original provides a solid foundation in Solidity, this version has bee
 
 My Vyper implementation compiles with a minimalist bytecode footprint. This ensures that the agent's logic is as cheap to deploy as it is to run.
 
-> **[Reference Image: docs/compilation_success.png]**
+> **[Reference Image: https://github.com/neonmercenary/8004-boilerplate/docs/compilation_success.png]**
 
 ### 2. Gas Benchmarks
 
 By removing the overhead of Solidity's metadata and using packed structs, this contract executes `completeTask` significantly cheaper than the original.
 
-> **[Reference Image: docs/gas_comparison.png]**
+> **[Reference Image: https://github.com/neonmercenary/8004-boilerplate/docs/gas_comparison.png]**
 
 
 ## 🚀 Why Vyper? (The Efficiency Edge)
