@@ -56,7 +56,7 @@ My Vyper implementation compiles with a minimalist bytecode footprint. This ensu
 
 > **[Reference Image:]**
 <p align="center">
-  <img src="docs/compilation_success.png" width="200" alt="Success Logo">
+  <img src="docs/contract_compliation.png" width="200" alt="Success Logo">
 </p>
 <p align="center">
   <img src="https://img.shields.io/badge/vyper-0.4.0-purple.svg">
