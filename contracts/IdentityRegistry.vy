@@ -117,18 +117,19 @@ def isApprovedForAll(owner: address, operator: address) -> bool:
 def transferFrom(frm: address, to: address, tokenId: uint256):
     owner: address = self.owners[tokenId]
     assert owner == frm, "Not owner"
+    assert to != ZERO, "Cannot transfer to zero"
     assert msg.sender == owner or msg.sender == self.tokenApprovals[tokenId] or self.operatorApprovals[owner][msg.sender], "Not authorized"
 
-
+    # Reset approvals and unbind wallet
     self.tokenApprovals[tokenId] = ZERO
-    self.agentWallets[tokenId] = ZERO # Explicitly unbind the wallet
-
-    log AgentWalletUnset(tokenId)
-
-    self.tokenApprovals[tokenId] = ZERO
+    self.agentWallets[tokenId] = ZERO 
+    
+    # Update state
     self.balances[frm] -= 1
     self.balances[to] += 1
     self.owners[tokenId] = to
+    
+    log AgentWalletUnset(tokenId)
     log Transfer(frm, to, tokenId)
 
 @internal
